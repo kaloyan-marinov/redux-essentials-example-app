@@ -74,3 +74,7 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## Creating the Posts Slice
 
 1. The first step is to create a new Redux "slice" that will contain the data for our posts. Once we have that data in the Redux store, we can create the React components to show that data on the page.
+
+## Showing the Posts List
+
+1. Now that we have some posts in our store, we can create a React component that shows the list of posts.
