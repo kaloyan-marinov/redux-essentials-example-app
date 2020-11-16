@@ -78,3 +78,8 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## Showing the Posts List
 
 1. Now that we have some posts in our store, we can create a React component that shows the list of posts.
+
+## Adding New Posts
+
+1. We'll create the empty form first and add it to the page.
+2. Then, we'll connect the form to our Redux store so that new posts are added when we click the "Save Post" button.
