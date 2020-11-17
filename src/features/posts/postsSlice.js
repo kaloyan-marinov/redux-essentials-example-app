@@ -14,6 +14,14 @@ const postsSlice = createSlice({
       // the `state` argument will be the array of posts by itself,
       // and not the entire Redux state object.
       state.push(action.payload)
+    },
+    postUpdated(state, action) {
+      const { id, title, content } = action.payload
+      const existingPost = state.find(post => post.id === id)
+      if (existingPost) {
+        existingPost.title = title
+        existingPost.content = content
+      }
     }
   }
 })
@@ -21,6 +29,6 @@ const postsSlice = createSlice({
 // When we write the `postAdded` reducer function,
 // `createSlice` will automatically generate an "action creator" function
 // with the same name.
-export const { postAdded } = postsSlice.actions
+export const { postAdded, postUpdated } = postsSlice.actions
 
 export default postsSlice.reducer
