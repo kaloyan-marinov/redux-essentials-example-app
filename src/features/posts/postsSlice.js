@@ -1,8 +1,19 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
+import { sub } from 'date-fns'
 
 const initialState = [
-  { id: '1', title: 'First Post!', content: 'Hello!' },
-  { id: '2', title: 'Second Post', content: 'More text' }
+  {
+    id: '1',
+    date: sub(new Date(), { minutes: 10 }).toISOString(),
+    title: 'First Post!',
+    content: 'Hello!'
+  },
+  {
+    id: '2',
+    date: sub(new Date(), { minutes: 5 }).toISOString(),
+    title: 'Second Post',
+    content: 'More text'
+  }
 ]
 
 const postsSlice = createSlice({
@@ -20,6 +31,11 @@ const postsSlice = createSlice({
         return {
           payload: {
             id: nanoid(),
+            // Redux actions and state should only contain plain JS values like objects,
+            // arrays, and primitives. Don't put class instances, functions, or other
+            // non-serializable values into Redux!
+            // (So plan to track the post.date as "a timestamp string".)
+            date: new Date().toISOString(),
             title,
             content,
             // (We'll also update the existing post entries in initialState
