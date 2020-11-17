@@ -16,12 +16,15 @@ const postsSlice = createSlice({
         // and not the entire Redux state object.
         state.push(action.payload)
       },
-      prepare(title, content) {
+      prepare(title, content, userId) {
         return {
           payload: {
             id: nanoid(),
             title,
-            content
+            content,
+            // (We'll also update the existing post entries in initialState
+            // to have a post.user field with one of the example user IDs.)
+            user: userId
           }
         }
       }

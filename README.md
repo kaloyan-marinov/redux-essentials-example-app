@@ -88,3 +88,4 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 1. Real applications will probably have many different slices of state, and several different "feature folders" for the Redux logic and React components.
 2. You can't have a "social media" app if there aren't any other people involved. Let's add the ability to keep track of a list of users in our app, and update the post-related functionality to make use of that data.
+3. In a real app, we'd have some sort of a `state.currentUser` field that keeps track of the current logged-in user, and use that information whenever they add a post.
