@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, nanoid } from '@reduxjs/toolkit'
 
 const initialState = [
   { id: '1', title: 'First Post!', content: 'Hello!' },
@@ -9,11 +9,22 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    postAdded(state, action) {
-      // Since the posts slice _only_ knows about the data it's responsible for,
-      // the `state` argument will be the array of posts by itself,
-      // and not the entire Redux state object.
-      state.push(action.payload)
+    postAdded: {
+      reducer(state, action) {
+        // Since the posts slice _only_ knows about the data it's responsible for,
+        // the `state` argument will be the array of posts by itself,
+        // and not the entire Redux state object.
+        state.push(action.payload)
+      },
+      prepare(title, content) {
+        return {
+          payload: {
+            id: nanoid(),
+            title,
+            content
+          }
+        }
+      }
     },
     postUpdated(state, action) {
       const { id, title, content } = action.payload
