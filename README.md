@@ -83,3 +83,8 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 1. We'll create the empty form first and add it to the page.
 2. Then, we'll connect the form to our Redux store so that new posts are added when we click the "Save Post" button.
+
+## Users and Posts
+
+1. Real applications will probably have many different slices of state, and several different "feature folders" for the Redux logic and React components.
+2. You can't have a "social media" app if there aren't any other people involved. Let's add the ability to keep track of a list of users in our app, and update the post-related functionality to make use of that data.
