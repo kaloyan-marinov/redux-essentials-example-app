@@ -7,6 +7,8 @@ import { PostAuthor } from './PostAuthor'
 
 import { TimeAgo } from './TimeAgo'
 
+import { ReactionButtons } from './ReactionButtons'
+
 export const SinglePostPage = ({ match }) => {
   const { postId } = match.params
 
@@ -34,6 +36,7 @@ export const SinglePostPage = ({ match }) => {
         <Link to={`/editPost/${post.id}`} className="button">
           Edit Post
         </Link>
+        <ReactionButtons post={post} />
       </article>
     </section>
   )
