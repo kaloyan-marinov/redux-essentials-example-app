@@ -89,3 +89,9 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 1. Real applications will probably have many different slices of state, and several different "feature folders" for the Redux logic and React components.
 2. You can't have a "social media" app if there aren't any other people involved. Let's add the ability to keep track of a list of users in our app, and update the post-related functionality to make use of that data.
 3. In a real app, we'd have some sort of a `state.currentUser` field that keeps track of the current logged-in user, and use that information whenever they add a post.
+
+## Extracting Posts Selectors
+
+1. It's often a good idea to encapsulate data lookups by writing reusable selectors.
+2. But, like any abstraction, it's not something you should do _all_ the time, everywhere... **Don't feel like you need to write selectors for every single field of your state.**
+3. Try starting without any selectors, and add some later when you find yourself looking up the same values in many parts of your application code.
