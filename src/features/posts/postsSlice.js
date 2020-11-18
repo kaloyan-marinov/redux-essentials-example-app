@@ -6,13 +6,15 @@ const initialState = [
     id: '1',
     date: sub(new Date(), { minutes: 10 }).toISOString(),
     title: 'First Post!',
-    content: 'Hello!'
+    content: 'Hello!',
+    reactions: { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 }
   },
   {
     id: '2',
     date: sub(new Date(), { minutes: 5 }).toISOString(),
     title: 'Second Post',
-    content: 'More text'
+    content: 'More text',
+    reactions: { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 }
   }
 ]
 
@@ -40,7 +42,8 @@ const postsSlice = createSlice({
             content,
             // (We'll also update the existing post entries in initialState
             // to have a post.user field with one of the example user IDs.)
-            user: userId
+            user: userId,
+            reactions: { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 }
           }
         }
       }
