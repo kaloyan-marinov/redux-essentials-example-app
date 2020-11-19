@@ -1,26 +1,10 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
-import { sub } from 'date-fns'
 
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
 const initialState = {
-  posts: [
-    {
-      id: '1',
-      date: sub(new Date(), { minutes: 10 }).toISOString(),
-      title: 'First Post!',
-      content: 'Hello!',
-      reactions: { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 }
-    },
-    {
-      id: '2',
-      date: sub(new Date(), { minutes: 5 }).toISOString(),
-      title: 'Second Post',
-      content: 'More text',
-      reactions: { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 }
-    }
-  ],
+  posts: [],
   status: 'idle',
   error: null
 }
@@ -82,6 +66,24 @@ const postsSlice = createSlice({
       if (existingPost) {
         existingPost.reactions[reaction]++
       }
+    }
+  },
+  // The following field enables its encompassing slice reducer
+  // to respond to *other* actions
+  // that weren't defined as part of this slice's `reducers` field.
+  extraReducers: {
+    // The keys are "ES6 object literal computed properties".
+    [fetchPosts.pending]: (state, action) => {
+      state.status = 'loading'
+    },
+    [fetchPosts.fulfilled]: (state, action) => {
+      state.status = 'succeeded'
+      // Add the fetched posts to the array.
+      state.posts = state.posts.concat(action.payload)
+    },
+    [fetchPosts.rejected]: (state, action) => {
+      state.status = 'failed'
+      state.error = action.error.message
     }
   }
 })
