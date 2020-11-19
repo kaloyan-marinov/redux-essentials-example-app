@@ -1,4 +1,5 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit'
+// import { createSlice, nanoid } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
@@ -38,6 +39,7 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
+    /*
     postAdded: {
       reducer(state, action) {
         // Since the posts slice _only_ knows about the data it's responsible for,
@@ -64,6 +66,7 @@ const postsSlice = createSlice({
         }
       }
     },
+    */
     postUpdated(state, action) {
       const { id, title, content } = action.payload
       const existingPost = state.posts.find(post => post.id === id)
