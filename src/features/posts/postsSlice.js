@@ -1,6 +1,9 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
 import { sub } from 'date-fns'
 
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { client } from '../../api/client'
+
 const initialState = {
   posts: [
     {
@@ -21,6 +24,19 @@ const initialState = {
   status: 'idle',
   error: null
 }
+
+export const fetchPosts = createAsyncThunk(
+  // A string that will be used as the prefix for the generated action types.
+  'posts/fetchPosts',
+  // A "payload creator" callback function
+  // that will usually make an AJAX call to a server API.
+  // (It can either return the Promise from the AJAX call directly,
+  // or extract some data from the API response and return that.)
+  async () => {
+    const response = await client.get('/fakeApi/posts')
+    return response.posts
+  }
+)
 
 const postsSlice = createSlice({
   name: 'posts',

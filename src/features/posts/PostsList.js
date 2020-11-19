@@ -10,8 +10,25 @@ import { ReactionButtons } from './ReactionButtons'
 
 import { selectAllPosts } from './postsSlice'
 
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { fetchPosts } from './postsSlice'
+
 export const PostsList = () => {
+  const dispatch = useDispatch()
   const posts = useSelector(selectAllPosts)
+
+  const postStatus = useSelector(state => state.posts.status)
+
+  // Avoid fetching the posts
+  // every time the PostsList component renders,
+  // or is re-created because we've switched between views.
+  // (Otherwise we might end up fetching the posts several times.)
+  useEffect(() => {
+    if (postStatus === 'idle') {
+      dispatch(fetchPosts())
+    }
+  }, [postStatus, dispatch])
 
   const orderedPosts = posts
     .slice()
