@@ -23,12 +23,25 @@ export const fetchNotifications = createAsyncThunk(
 const notificationsSlice = createSlice({
   name: 'notifications',
   initialState: [],
-  reducers: {},
+  reducers: {
+    allNotificationsRead(state, action) {
+      // Mark all notifications as read.
+      state.forEach(notification => {
+        notification.read = true
+      })
+    }
+  },
   extraReducers: {
     [fetchNotifications.fulfilled]: (state, action) => {
+      // Any notifications we've read are no longer new:
+      state.forEach(notification => {
+        notification.isNew = !notification.read
+      })
+
       // We know that we will be getting back an array of notifications,
       // so we can pass them as separate arguments to:
       state.push(...action.payload)
+
       // Sort with newest first
       // make sure that they're sorted ...
       // ... just in case the server were to send them out of order
@@ -38,6 +51,8 @@ const notificationsSlice = createSlice({
     }
   }
 })
+
+export const { allNotificationsRead } = notificationsSlice.actions
 
 export default notificationsSlice.reducer
 
