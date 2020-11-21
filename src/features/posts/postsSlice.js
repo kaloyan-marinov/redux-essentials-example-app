@@ -4,6 +4,8 @@ import { createSlice } from '@reduxjs/toolkit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
+import { createSelector } from '@reduxjs/toolkit'
+
 const initialState = {
   posts: [],
   status: 'idle',
@@ -118,3 +120,17 @@ export const selectAllPosts = state => state.posts.posts
 
 export const selectPostById = (state, postId) =>
   state.posts.posts.find(post => post.id === postId)
+
+/*
+[The] `createSelector` function [from the `Reselect` library] ... generates
+memoized selectors that will only recalculate results when the inputs change
+- `createSelector` takes one or more "input selector" functions as argument,
+  plus an "output selector" function.
+- When we call `selectPostsByUser(state, userId)`,
+  `createSelector` will pass all of the arguments into each of our input selectors.
+- Whatever those input selectors return becomes the arguments for the output selector.
+*/
+export const selectPostsByUser = createSelector(
+  [selectAllPosts, (state, userId) => userId],
+  (posts, userId) => posts.filter(post => post.user === userId)
+)
