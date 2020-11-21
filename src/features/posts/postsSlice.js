@@ -6,11 +6,53 @@ import { client } from '../../api/client'
 
 import { createSelector } from '@reduxjs/toolkit'
 
-const initialState = {
-  posts: [],
+/*
+Fix #2.3:
+
+The last option is
+to find some way to have our reducer keep a separate array of IDs for all the posts,
+and only modify that array when posts are added or removed,
+and do the same rewrite of `<PostsList>` and `<PostExcerpt>`.
+
+This way, `<PostsList>` only needs to re-render when that IDs array changes.
+
+Conveniently,
+Redux Toolkit has a `createEntityAdapter` function that will help us do just that.
+*/
+import { createEntityAdapter } from '@reduxjs/toolkit'
+/*
+[The imported function] ... provides a standardized way to store your data in a slice by
+taking a collection of items
+and putting them into the shape of `{ ids: [], entities: {} }`.
+Along with this predefined state shape,
+... [the returned adapter object]:
+
+- has a `getInitialState` function that generates an empty `{ ids: [], entities: {} }`
+  object. You can pass in more fields to `getInitialState`, and those will be merged in.
+
+- contains a set of generated reducer functions for adding, updating, and removing items
+  from an entity state object
+  (These reducer functions can
+  either be used as a case reducer for a specific action type,
+  or as a "mutating" utility function within another reducer in `createSlice`.)
+
+- also has a `getSelectors` function,
+  [which accepts as input] a selector that returns a particular slice of state
+  from the Redux root state,
+  and ... will generate selectors like `selectAll` and `selectById`
+*/
+
+// We ... want to keep an array of all post IDs sorted with the newest post first,
+// so we pass in a `sortComparer` function
+// that will sort newer items to the front based on the `post.date` field.
+const postsAdapter = createEntityAdapter({
+  sortComparer: (postA, postB) => postB.date.localeCompare(postA.date)
+})
+
+const initialState = postsAdapter.getInitialState({
   status: 'idle',
   error: null
-}
+})
 
 export const fetchPosts = createAsyncThunk(
   // A string that will be used as the prefix for the generated action types.
@@ -71,7 +113,7 @@ const postsSlice = createSlice({
     */
     postUpdated(state, action) {
       const { id, title, content } = action.payload
-      const existingPost = state.posts.find(post => post.id === id)
+      const existingPost = state.entities[id]
       if (existingPost) {
         existingPost.title = title
         existingPost.content = content
@@ -79,7 +121,7 @@ const postsSlice = createSlice({
     },
     reactionAdded(state, action) {
       const { postId, reaction } = action.payload
-      const existingPost = state.posts.find(post => post.id === postId)
+      const existingPost = state.entities[postId]
       if (existingPost) {
         existingPost.reactions[reaction]++
       }
@@ -96,16 +138,25 @@ const postsSlice = createSlice({
     [fetchPosts.fulfilled]: (state, action) => {
       state.status = 'succeeded'
       // Add the fetched posts to the array.
-      state.posts = state.posts.concat(action.payload)
+      // state.posts = state.posts.concat(action.payload)
+      // Use the `upsertMany` reducer as a mutating update utility.
+      // ... to add all of the incoming posts to the state
+      // (If there's any items in `action.payload` that already existing in our state,
+      // the `upsertMany` function will merge them together based on matching IDs.)
+      postsAdapter.upsertMany(state, action.payload)
     },
     [fetchPosts.rejected]: (state, action) => {
       state.status = 'failed'
       state.error = action.error.message
     },
+    /*
     [addNewPost.fulfilled]: (state, action) => {
       // We can directly add the new post object to our posts array.
       state.posts.push(action.payload)
     }
+    */
+    // Use the `addOne` ... [adapter function as a reducer] directly
+    [addNewPost.fulfilled]: postsAdapter.addOne
   }
 })
 
@@ -116,10 +167,22 @@ export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
 
 export default postsSlice.reducer
 
+/*
 export const selectAllPosts = state => state.posts.posts
 
 export const selectPostById = (state, postId) =>
   state.posts.posts.find(post => post.id === postId)
+*/
+// Export the customized selectors for this adapter using `getSelectors`.
+// The generated selector functions are always called selectAll and selectById,
+// so we can use ES6 destructuring syntax to rename them as we export them
+// and match the old selector names.
+export const {
+  selectAll: selectAllPosts,
+  selectById: selectPostById,
+  selectIds: selectPostIds
+  // Pass in a selector that returns the posts slice of state
+} = postsAdapter.getSelectors(state => state.posts)
 
 /*
 [The] `createSelector` function [from the `Reselect` library] ... generates
