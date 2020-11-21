@@ -14,7 +14,8 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { fetchPosts } from './postsSlice'
 
-let PostExcerpt = ({ post }) => {
+// let PostExcerpt = ({ post }) => {
+const PostExcerpt = ({ post }) => {
   return (
     <article className="post-excerpt" key={post.id}>
       <h3>{post.title}</h3>
@@ -57,7 +58,25 @@ Fix #2.1:
 wrap the <PostExcerpt> component in `React.memo()`, which will ensure that
 the component inside of it only re-renders if the props have actually changed.
 */
-PostExcerpt = React.memo(PostExcerpt)
+// PostExcerpt = React.memo(PostExcerpt)
+
+/*
+Fix #2.2:
+
+Another option is to rewrite <PostsList> so that it only selects a list of post IDs from
+the store instead of the entire posts array, and rewrite <PostExcerpt> so that it
+receives a postId prop and calls useSelector to read the post object it needs.
+If <PostsList> gets the same list of IDs as before, it won't need to re-render, and so
+only our one changed <PostExcerpt> component should have to render.
+
+Unfortunately, this gets tricky because we also need to have all our posts sorted by
+date and rendered in the right order. We could update our postsSlice to keep the array
+sorted at all times, so we don't have to sort it in the component, and use a memoized
+selector to extract just the list of post IDs. We could also customize the comparison
+function that useSelector runs to check the results, like
+`useSelector(selectPostIds, shallowEqual)`, so that will skip re-rendering if the
+contents of the IDs array haven't changed.
+*/
 
 export const PostsList = () => {
   const dispatch = useDispatch()
